@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { AddressBook } from '../lib/collections';
 import './publish.js'; // 발행은 서버에서 동작한다.
+import '../lib/collections.js'
 const fixtures = 
 [
 	{
@@ -552,10 +553,15 @@ const fixtures =
 ]
 
 Meteor.startup(() => {
- if(AddressBook.find().count() === 0){
-   console.log('데이터 없음 추가작업 시작');
-   for(let i = 0 ; i < 10 ; i++){
-    AddressBook.insert(fixtures[i])
-   }
- }
+ 
 });
+
+Meteor.methods({
+	makeFixtureData (userId){
+		for(let i = 0 ; i < fixtures.length ; i++){
+			fixtures[i]['owner'] = userId;
+			AddressBook.insert(fixtures[i])
+		}
+		return '완료되었습니다'
+	}
+})

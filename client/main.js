@@ -7,7 +7,18 @@ import { NotEmptyString, EmailString, PhoneStirng, BirthdayString} from '../lib/
 import './main.html';
 
 Template.addressList.onCreated(function(){
-  this.subscribe('AddressBookData', 5); //템플릿이 생성됨과 동시에 구독이 이루어져야한다.
+  Session.set('cnt', 30)
+  let self = this;
+  self.autorun(function(){
+    self.subscribe('AddressBookData', Session.get('cnt')); //템플릿이 생성됨과 동시에 구독이 이루어져야한다.
+  })
+})
+$(window).scroll(function(){
+  let scrollHeight = $(window).scrollTop()+$(window).height();
+  let documentHeight = $(document).height();
+  if(scrollHeight + 200 >= documentHeight){
+    Session.set('cnt', Session.get('cnt') + 30);
+  }
 })
 Template.addressList.helpers({
   list(){
@@ -15,7 +26,9 @@ Template.addressList.helpers({
   }
 })
 Template.addressList.events({
-  
+  'click button[name=more]'(evt, tmpl){
+    Session.set('cnt', Session.get('cnt') + 5);
+  }
 })
 
 Template.addressListItem.helpers({
